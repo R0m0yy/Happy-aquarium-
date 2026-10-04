@@ -373,3 +373,25 @@ input[type='range'] { width: 100%; accent-color: var(--cyan); }
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
+
+.tray-item.locked .thumb { filter: grayscale(0.8) brightness(0.6); }
+.tray-item.locked .name, .tray-item.locked .meta { color: var(--dim); }
+.rail-btn.off { color: var(--dim); }
+
+/* ---------------------------------------------------- portrait phones */
+@media (max-aspect-ratio: 4/5) {
+  .profile > div:last-child .profile-name { display: none; }
+  .xp-bar { width: 70px; }
+  .rail { transform: none; flex-direction: row; padding: 4px; gap: 0; border-radius: 16px; overflow-x: auto; touch-action: pan-x; }
+  .rail-left { top: calc(66px + var(--sat)); left: calc(8px + var(--sal)); right: calc(8px + var(--sar)); justify-content: space-between; }
+  .rail-left .rail-btn:nth-child(n + 6) { display: flex; }
+  .rail-right { top: auto; bottom: calc(84px + var(--sab)); right: calc(8px + var(--sar)); left: calc(8px + var(--sal)); justify-content: space-around; }
+  .rail-btn { width: auto; flex: 1; min-width: 46px; height: 52px; }
+  .rail-btn + .rail-btn::before { display: none; }
+  .mode-tools { top: auto; bottom: calc(190px + var(--sab)); right: calc(8px + var(--sar)); left: calc(8px + var(--sal)); transform: none; flex-direction: row; overflow-x: auto; }
+  .mode-tools .rail-btn { min-width: 52px; }
+  .tray { left: 8px; right: 8px; }
+  .fish-card .actions { grid-template-columns: repeat(5, 1fr); }
+  .clean-bar { flex-wrap: wrap; justify-content: center; width: calc(100vw - 16px); bottom: calc(150px + var(--sab)); }
+  .photo-bar { flex-wrap: wrap; justify-content: center; width: calc(100vw - 16px); }
+}

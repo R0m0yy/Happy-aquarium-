@@ -68,7 +68,7 @@ export function createDefaultState() {
     character: {
       skin: '#f0cdb4',
       hairStyle: 'curly',
-      hairColor: '#4a2a1a',
+      hairColor: '#5a3420',
       top: 'hoodie',
       topColor: '#f1ece4',
       pants: '#2a3a5a',

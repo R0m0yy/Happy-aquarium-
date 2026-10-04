@@ -205,32 +205,41 @@ export function makeShelf(width, color = '#4a2f1e') {
 }
 
 export function makeBooks(width, seed = 1) {
-  const g = new THREE.Group();
+  // one merged mesh with vertex colours: cheap to draw, rich to look at
   const rng = makeRng(seed);
-  const tex = toTexture(bookSpines(seed));
   let x = -width / 2;
-  const cols = [0x7a2a2a, 0x2a4a6a, 0xd8c8a0, 0x3a5a3a, 0xc89a4a, 0x5a3a5a, 0xe8e0d0, 0x1e2a3a];
+  const cols = [0x7a2a2a, 0x2a4a6a, 0xd8c8a0, 0x3a5a3a, 0xc89a4a, 0x5a3a5a, 0xe8e0d0, 0x1e2a3a, 0xa85a3a];
   const geos = [];
-  const spineMat = new THREE.MeshStandardMaterial({ map: tex, roughness: 0.75 });
+  const c = new THREE.Color();
   while (x < width / 2 - 0.03) {
     const w = 0.025 + rng() * 0.035;
     const h = 0.2 + rng() * 0.1;
     const d = 0.16 + rng() * 0.06;
-    const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), [
-      new THREE.MeshStandardMaterial({ color: cols[Math.floor(rng() * cols.length)], roughness: 0.8 }),
-      new THREE.MeshStandardMaterial({ color: cols[Math.floor(rng() * cols.length)], roughness: 0.8 }),
-      new THREE.MeshStandardMaterial({ color: 0xeee6d4, roughness: 0.9 }),
-      new THREE.MeshStandardMaterial({ color: 0xeee6d4, roughness: 0.9 }),
-      spineMat,
-      new THREE.MeshStandardMaterial({ color: 0xeee6d4, roughness: 0.9 }),
-    ]);
+    const g = new THREE.BoxGeometry(w, h, d);
     const tilt = rng() < 0.08 ? 0.25 : 0;
-    b.position.set(x + w / 2, h / 2, 0);
-    b.rotation.z = -tilt;
-    g.add(b);
+    g.rotateZ(-tilt);
+    g.translate(x + w / 2, h / 2, 0);
+    const pos = g.attributes.position;
+    const col = new Float32Array(pos.count * 3);
+    c.setHex(cols[Math.floor(rng() * cols.length)]);
+    const page = new THREE.Color(0xeee6d4);
+    for (let i = 0; i < pos.count; i++) {
+      // faces 2/3 (top/bottom) and 5 (back) show pages
+      const face = Math.floor(i / 4);
+      const cc = face === 2 || face === 3 ? page : c;
+      const band = face === 4 && Math.abs(pos.getY(i) - h * 0.85) < 0.01 ? 1.4 : 1;
+      col[i * 3] = cc.r * band;
+      col[i * 3 + 1] = cc.g * band;
+      col[i * 3 + 2] = cc.b * band;
+    }
+    g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    geos.push(g);
     x += w + 0.002 + (tilt ? 0.05 : 0);
     if (rng() < 0.06) x += 0.12;
   }
+  const mesh = new THREE.Mesh(mergeGeometries(geos), mat('bookmat', () => new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.75 })));
+  const g = new THREE.Group();
+  g.add(mesh);
   return shadowAll(g, true, true);
 }
 

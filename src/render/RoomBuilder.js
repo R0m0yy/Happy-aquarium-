@@ -1,6 +1,7 @@
 // Builds the furnished room around the aquarium. Rebuilt whenever the room,
 // its customisation options, or the tank size changes.
 import * as THREE from 'three';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { ROOM_BY_ID, ROOM_OPTIONS } from '../data/items.js';
 import {
   toTexture, woodTexture, plasterTexture, rugTexture, marbleTexture, concreteTexture, windowView, artworkTexture, posterTexture,
@@ -50,12 +51,12 @@ export class RoomBuilder {
     this.tankX = tankX;
     this.tankDims = tankDims;
     const left = -W / 2, right = W / 2;
-    const front = 6.5;
+    const front = 12;
     this.bounds = { minX: left + 0.35, maxX: right - 0.35, minZ: BACK_Z + 0.3, maxZ: 4.2 };
 
     // ------------------------------------------------------------ floor
     const floorStyle = opt.floor === 'default' ? room.floor : opt.floor;
-    let floorTex, floorRough = 0.55;
+    let floorTex, floorRough = 0.68;
     if (floorStyle === 'marble') {
       floorTex = toTexture(marbleTexture(), { repeat: [W / 3, 3] });
       floorRough = 0.18;
@@ -92,11 +93,9 @@ export class RoomBuilder {
     this.group.add(panel);
     // vertical slats on the panel for richness
     const slatM = new THREE.MeshStandardMaterial({ color: 0x24170e, roughness: 0.7 });
-    for (let x = -panelW / 2 + 0.1; x < panelW / 2; x += 0.16) {
-      const s = new THREE.Mesh(new THREE.BoxGeometry(0.025, CEIL, 0.02), slatM);
-      s.position.set(tankX + x, CEIL / 2, BACK_Z + 0.07);
-      this.group.add(s);
-    }
+    const slats = [];
+    for (let x = -panelW / 2 + 0.1; x < panelW / 2; x += 0.16) slats.push(new THREE.BoxGeometry(0.025, CEIL, 0.02).translate(tankX + x, CEIL / 2, BACK_Z + 0.07));
+    this.group.add(new THREE.Mesh(mergeGeometries(slats), slatM));
     // left wall: big window wall
     const leftWall = new THREE.Mesh(new THREE.PlaneGeometry(front - BACK_Z, CEIL), wallM);
     leftWall.rotation.y = Math.PI / 2;
@@ -335,7 +334,7 @@ export class RoomBuilder {
     // hide the solid left wall section behind the window by cutting: overlay wall only beyond lz1
     this.group.children.forEach((c) => {
       if (c.geometry?.type === 'PlaneGeometry' && Math.abs(c.position.x - left) < 0.001 && c.rotation.y === Math.PI / 2 && c.geometry.parameters.width > lw + 1) {
-        const len = 6.5 - lz1;
+        const len = 12 - lz1;
         c.geometry.dispose();
         c.geometry = new THREE.PlaneGeometry(len, CEIL);
         c.position.z = lz1 + len / 2;

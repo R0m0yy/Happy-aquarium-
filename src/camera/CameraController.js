@@ -27,12 +27,15 @@ export class CameraController {
     this.room = room;
     const w = aq.dim.w;
     const aspect = this.cam.aspect;
-    const fit = (w * 1.45) / (2 * Math.tan(THREE.MathUtils.degToRad(this.cam.fov / 2)) * Math.max(1.0, aspect));
-    const dist = clamp(fit + 0.6, 3.2, 9) * (aspect < 1 ? 1.5 : 1);
+    const tanH = Math.tan(THREE.MathUtils.degToRad(this.cam.fov / 2));
+    const portrait = aspect < 1;
+    // fit the tank (plus some room) horizontally; portrait screens show the tank edge to edge
+    const span = portrait ? w * 1.12 : w * 1.75;
+    const dist = clamp(span / 2 / (tanH * aspect) + 0.4, 3.2, portrait ? 13 : 9);
     this.home = {
-      target: new THREE.Vector3(aq.center.x - w * 0.08, aq.center.y + aq.dim.h * 0.42, aq.center.z + 0.2),
-      yaw: -0.1,
-      pitch: 0.11,
+      target: new THREE.Vector3(aq.center.x - (portrait ? 0 : w * 0.12), aq.center.y + aq.dim.h * (portrait ? 0.15 : 0.3), aq.center.z + 0.35),
+      yaw: portrait ? -0.06 : -0.2,
+      pitch: portrait ? 0.07 : 0.1,
       dist,
     };
     this.limits.dist = [0.9, dist * 1.35];
@@ -190,7 +193,7 @@ export class CameraController {
       p.y = clamp(p.y, 0.25, 4.1);
       if (this.room) {
         p.x = clamp(p.x, this.room.bounds.minX - 0.2, this.room.bounds.maxX + 0.2);
-        p.z = Math.min(p.z, 6.3);
+        p.z = Math.min(p.z, 11.5);
       }
     }
     cam.position.copy(p);

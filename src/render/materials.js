@@ -5,7 +5,7 @@ import * as THREE from 'three';
 
 export const TANK_UNIFORMS = {
   uTime: { value: 0 },
-  uCaustic: { value: 1.0 },
+  uCaustic: { value: 0.75 },
   uCausticIter: { value: 4 },
   uCausticScale: { value: 1.4 },
   uTankLight: { value: 1.0 },

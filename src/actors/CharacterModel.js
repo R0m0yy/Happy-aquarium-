@@ -329,23 +329,23 @@ export class CharacterModel {
     const style = look.hairStyle;
     if (style !== 'spiky') add(cap, 0, 0.0, -0.005, 1.02, 1.0, 1.02, -0.15);
     if (style === 'curly') {
-      const curl = new THREE.SphereGeometry(0.055, 12, 10);
-      for (let i = 0; i < 46; i++) {
+      const curl = new THREE.SphereGeometry(0.036, 12, 10);
+      for (let i = 0; i < 64; i++) {
         const th = rng() * Math.PI * 2;
         const ph = rng() * Math.PI * 0.52;
         const back = Math.cos(th) < 0 ? 1 : 0;
-        const r = R * (1.02 + rng() * 0.06);
+        const r = R * (0.99 + rng() * 0.04);
         const x = Math.sin(ph) * Math.sin(th) * r * 1.05;
         const y = Math.cos(ph) * r * 0.98 - (back ? rng() * 0.05 : 0);
         const z = Math.sin(ph) * Math.cos(th) * r;
         if (z > R * 0.55 && y < R * 0.5) continue; // keep the face clear
-        add(curl, x, y, z, 1 + rng() * 0.4, 0.9 + rng() * 0.3, 1 + rng() * 0.3);
+        add(curl, x, y, z, 1 + rng() * 0.3, 0.85 + rng() * 0.25, 1 + rng() * 0.2);
       }
       // fringe curls over the forehead
-      const t = new THREE.TorusGeometry(0.03, 0.016, 8, 14);
-      for (let i = 0; i < 6; i++) add(t, -0.1 + i * 0.04, R * 0.62 + Math.sin(i) * 0.01, R * 0.78, 1, 1, 1, rng() * 3, rng() * 0.6, rng() * 3);
+      const t = new THREE.TorusGeometry(0.026, 0.013, 8, 14);
+      for (let i = 0; i < 8; i++) add(t, -0.12 + i * 0.034, R * 0.64 + Math.sin(i) * 0.01, R * 0.78, 1, 1, 1, rng() * 3, rng() * 0.6, rng() * 3);
       // back fluff
-      for (let i = 0; i < 8; i++) add(curl, (rng() - 0.5) * 0.25, -0.02 - rng() * 0.08, -R * 0.75, 1.3, 1.2, 1);
+      for (let i = 0; i < 6; i++) add(curl, (rng() - 0.5) * 0.22, -0.01 - rng() * 0.06, -R * 0.78, 1.1, 1.1, 0.9);
     } else if (style === 'short') {
       for (let i = 0; i < 10; i++) add(new THREE.SphereGeometry(0.06, 10, 8), -0.12 + i * 0.027, R * 0.62, R * 0.62, 1, 0.5, 0.7, 0.4);
     } else if (style === 'bob') {

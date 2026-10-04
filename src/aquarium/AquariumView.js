@@ -358,7 +358,7 @@ export class AquariumView {
     this.group.add(this.spot, this.spot.target);
     // spill light onto the room in front of the tank
     this.spill = new THREE.PointLight(0x7fd8ff, 1.2, 5.5, 1.6);
-    this.spill.position.set(0, h * 0.5, d / 2 + 0.5);
+    this.spill.position.set(0, -0.25, d / 2 + 0.6);
     this.group.add(this.spill);
   }
 
@@ -511,7 +511,7 @@ export class AquariumView {
     this.algaeCanvas = canvas(512, 256);
     this.algaeCtx = this.algaeCanvas.getContext('2d', { willReadFrequently: true });
     this.algaeTex = toTexture(this.algaeCanvas, { srgb: false, mips: false });
-    const m = new THREE.MeshStandardMaterial({ color: 0x5c8a3a, alphaMap: this.algaeTex, transparent: true, roughness: 0.9, depthWrite: false, opacity: 1 });
+    const m = new THREE.MeshStandardMaterial({ color: 0x6c9a3a, emissive: 0x16240a, alphaMap: this.algaeTex, transparent: true, roughness: 0.9, depthWrite: false, opacity: 1 });
     this.algaeMat = m;
     const mesh = new THREE.Mesh(new THREE.PlaneGeometry(w - G * 2, h - 0.03), m);
     mesh.position.set(0, h / 2 + 0.015, d / 2 - G - 0.004);
@@ -527,12 +527,12 @@ export class AquariumView {
     const W = 512, H = 256;
     const img = ctx.createImageData(W, H);
     const n = this.noise;
-    const thr = 1 - level * 0.85;
+    const thr = 0.78 - level * 0.62;
     for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
       const v = n.fbm(x * 0.012, y * 0.02, 4) * 0.75 + n(x * 0.08, y * 0.08) * 0.25;
       // algae prefers the lower glass and corners
       const bias = (y / H) * 0.18 + (Math.min(x, W - x) < 60 ? 0.08 : 0);
-      const a = clamp((v + bias - thr) * 6, 0, 1);
+      const a = level < 0.02 ? 0 : clamp((v + bias - thr) * 6, 0, 1);
       const i = (y * W + x) * 4;
       const val = a > 0 ? Math.floor(clamp(a * 200 + n(x * 0.3, y * 0.3) * 40, 0, 230)) : 0;
       img.data[i] = img.data[i + 1] = img.data[i + 2] = val;
@@ -540,6 +540,8 @@ export class AquariumView {
     }
     ctx.putImageData(img, 0, 0);
     this.algaeTex.needsUpdate = true;
+    this.clearedCells = new Set();
+    this.cellPeak = null;
     this.computeAlgaeCells();
   }
 
@@ -551,7 +553,7 @@ export class AquariumView {
     const img = ctx.getImageData(0, 0, W, H);
     const n = this.noise;
     const lvl = this.tank.algae.level;
-    const thr = 1 - lvl * 0.85;
+    const thr = 0.78 - lvl * 0.62;
     const inc = amount * 900;
     for (let y = 0; y < H; y += 1) for (let x = 0; x < W; x += 1) {
       const v = n.fbm(x * 0.012, y * 0.02, 2) * 0.75 + n(x * 0.08, y * 0.08) * 0.25 + (y / H) * 0.18;
@@ -580,11 +582,18 @@ export class AquariumView {
     }
     this.algaeCells = cells;
     this.algaeCoverage = total / cells.length;
+    if (!this.cellPeak || this.cellPeak.length !== cells.length) this.cellPeak = cells.slice();
+    if (!this.clearedCells) this.clearedCells = new Set();
+    for (let i = 0; i < cells.length; i++) {
+      if (cells[i] > this.cellPeak[i]) this.cellPeak[i] = cells[i];
+      // regrown cells can be cleaned again
+      if (this.clearedCells.has(i) && cells[i] > this.cellPeak[i] * 0.6) this.clearedCells.delete(i);
+    }
     return cells;
   }
 
   // erase algae at a uv point; returns amount removed (0..1-ish)
-  scrubAlgae(u, v, radius = 26) {
+  scrubAlgae(u, v, radius = 30) {
     const ctx = this.algaeCtx;
     const x = u * 512, y = (1 - v) * 256;
     const before = this.algaeCoverage;
@@ -599,10 +608,15 @@ export class AquariumView {
     ctx.fill();
     ctx.restore();
     this.algaeTex.needsUpdate = true;
-    const prevCells = this.algaeCells.slice();
     this.computeAlgaeCells();
     let cleared = 0;
-    for (let i = 0; i < prevCells.length; i++) if (prevCells[i] > 0.12 && this.algaeCells[i] <= 0.04) cleared++;
+    const peak = this.cellPeak;
+    for (let i = 0; i < peak.length; i++) {
+      if (peak[i] > 0.06 && this.algaeCells[i] <= Math.max(0.03, peak[i] * 0.45) && !this.clearedCells.has(i)) {
+        this.clearedCells.add(i);
+        cleared++;
+      }
+    }
     return { removed: Math.max(0, before - this.algaeCoverage), cleared };
   }
 
@@ -646,8 +660,8 @@ export class AquariumView {
       r.material.opacity = (r.userData.base + Math.sin(t * 0.4 + r.userData.phase) * 0.04) * tankLight;
     }
     this.edgeMat.opacity = 0.45 + tankLight * 0.35;
-    this.spot.intensity = 20 * tankLight * (this.lightDef?.intensity ?? 1);
-    this.spill.intensity = 0.6 + tankLight * 1.4;
+    this.spot.intensity = 14 * tankLight * (this.lightDef?.intensity ?? 1);
+    this.spill.intensity = 0.3 + tankLight * 0.7;
     this.barGlow.color.set(this.lightDef?.color ?? 0xffffff).multiplyScalar(0.25 + tankLight * 0.9);
   }
 

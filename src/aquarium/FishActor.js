@@ -183,7 +183,7 @@ export class FishActor {
 
   updateScale() {
     const len = this.sp.adultSize * this.ph.size * (STAGE_SCALE[this.rec.stage] ?? 1) * (this.rec.stage === 'ADULT' ? 1 : lerp(1, 1.15, this.rec.stageProgress ?? 0));
-    this.length = len * 1.3;
+    this.length = len * 1.85;
     this.inner.scale.setScalar(this.length);
   }
 

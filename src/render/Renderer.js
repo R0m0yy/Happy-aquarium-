@@ -94,6 +94,7 @@ export class Renderer {
     this.bloom.resolution.set(w * pr * 0.5, h * pr * 0.5);
     this.camera.aspect = w / h;
     this.camera.updateProjectionMatrix();
+    this.onResize?.();
   }
 
   // Capture the furnished room into a cube map so glass and water reflect it.
