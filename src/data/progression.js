@@ -31,7 +31,7 @@ export const ACHIEVEMENTS = [
   { id: 'new_generation', name: 'NEW GENERATION', desc: 'Hatch your first baby fish.', stat: 'hatched', goal: 1, reward: { pearls: 10 } },
   { id: 'rare_beauty', name: 'RARE BEAUTY', desc: 'Own a fish of RARE rarity or higher.', stat: 'rareOwned', goal: 1, reward: { pearls: 10 } },
   { id: 'master_breeder', name: 'MASTER BREEDER', desc: 'Breed fish 10 times.', stat: 'breeds', goal: 10, reward: { pearls: 25 } },
-  { id: 'gardener', name: 'UNDERWATER GARDENER', desc: 'Have 15 plants growing at once.', stat: 'plantsMax', goal: 15, reward: { pearls: 15 } },
+  { id: 'gardener', name: 'UNDERWATER GARDENER', desc: 'Have 24 plants growing at once.', stat: 'plantsMax', goal: 24, reward: { pearls: 15 } },
   { id: 'hundred', name: '100 FISH RAISED', desc: 'Raise 100 fish to adulthood.', stat: 'raised', goal: 100, reward: { pearls: 100 } },
   { id: 'clear', name: 'CRYSTAL CLEAR', desc: 'Clean 20 algae patches.', stat: 'patches', goal: 20, reward: { pearls: 10 } },
   { id: 'collector', name: 'COLLECTOR', desc: 'Discover 10 species.', stat: 'discovered', goal: 10, reward: { pearls: 20 } },

@@ -46,7 +46,7 @@ export class PlantSystem {
     obj.position.copy(p);
     const g = clamp(rec.growth ?? 0.6, 0.05, 1.4);
     const hScale = (0.35 + 0.65 * Math.min(1, g)) * (g > 1 ? 1 + (g - 1) * 0.9 : 1);
-    const s = rec.scale ?? 1;
+    const s = (rec.scale ?? 1) * 1.35;
     // cap height so tall plants never poke out of the water
     const maxH = this.aq.waterY - p.y - 0.02;
     const hs = Math.min(hScale * s, maxH / Math.max(0.01, def.height));
