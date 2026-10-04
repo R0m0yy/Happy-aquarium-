@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no" />
+    <meta name="theme-color" content="#0b1118" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="description" content="AQUARIA — Living Aquarium. Raise, breed and care for a living aquarium inside your cozy home." />
+    <title>AQUARIA — Living Aquarium</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b1824'/%3E%3Cpath d='M5 16c4-6 12-7 17-3l4-3v12l-4-3c-5 4-13 3-17-3z' fill='%234fd8ff'/%3E%3Ccircle cx='11' cy='15' r='1.4' fill='%230b1824'/%3E%3C/svg%3E" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "./vendor/three/three.module.js",
+          "three/addons/": "./vendor/three/addons/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div id="app">
+      <div id="stage"></div>
+      <div id="ui" class="hidden"></div>
+      <div id="title-card" aria-hidden="true">
+        <div class="title-word">AQUARIA</div>
+        <div class="title-sub">Living Aquarium</div>
+      </div>
+      <div id="loader">
+        <div class="loader-inner">
+          <div class="loader-logo">
+            <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 32c8-12 24-14 34-6l8-6v24l-8-6c-10 8-26 6-34-6z" fill="none" stroke="#4fd8ff" stroke-width="3" stroke-linejoin="round"/><circle cx="21" cy="30" r="2.6" fill="#4fd8ff"/></svg>
+          </div>
+          <div class="loader-title">AQUARIA</div>
+          <div class="loader-sub">Living Aquarium</div>
+          <div class="loader-bar"><div class="loader-fill"></div></div>
+          <div class="loader-msg">Filling the tank…</div>
+        </div>
+      </div>
+      <noscript><div class="noscript">AQUARIA needs JavaScript and WebGL to run.</div></noscript>
+    </div>
+    <script type="module" src="src/main.js"></script>
+  </body>
+</html>
