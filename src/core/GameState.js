@@ -18,7 +18,7 @@ export function createTank({ name, size = 't75', env = 'fresh', type = 'display'
     lighting: env === 'marine' ? 'tropical' : 'daylight',
     equipment: { filter: 'filter_basic', heater: null, air: null, co2: null, uv: null, feeder: null },
     water: { quality: 0.82, temp: 25, oxygen: 0.85, cleanliness: 0.8 },
-    algae: { level: starter ? 0.32 : 0.05, seed: Math.floor(Math.random() * 1e6) },
+    algae: { level: starter ? 0.26 : 0.03, seed: Math.floor(Math.random() * 1e6) },
     debris: starter ? 0.15 : 0,
     filterHealth: 0.9,
     created: Date.now(),
@@ -39,20 +39,20 @@ export function createDefaultState() {
   const guppyM = createFish('guppy', { name: 'Sunny', sex: 'M', genes: { pattern: 'mosaic', fin: 'fan', primary: { h: 200, s: 70, l: 55 }, secondary: { h: 22, s: 92, l: 56 } }, hunger: 0.55 });
   const guppyF = createFish('guppy', { name: 'Pip', sex: 'F', genes: { pattern: 'tuxedo', fin: 'delta', primary: { h: 30, s: 80, l: 58 }, secondary: { h: 210, s: 80, l: 55 } }, hunger: 0.55 });
   main.fish.push(betta, guppyM, guppyF);
+  const P = (plantId, nx, nz, growth = 0.8, scale = 1, rot = Math.random() * 6) => ({ uid: uid('pl'), plantId, nx, nz, growth, scale, rot });
   main.plants = [
-    { uid: uid('pl'), plantId: 'vallisneria', nx: -0.42, nz: -0.38, growth: 0.75, scale: 1, rot: 0 },
-    { uid: uid('pl'), plantId: 'vallisneria', nx: 0.36, nz: -0.4, growth: 0.7, scale: 1, rot: 1 },
-    { uid: uid('pl'), plantId: 'amazon', nx: -0.18, nz: -0.32, growth: 0.7, scale: 1, rot: 0.5 },
-    { uid: uid('pl'), plantId: 'rotala', nx: 0.12, nz: -0.36, growth: 0.92, scale: 1, rot: 2 },
-    { uid: uid('pl'), plantId: 'rotala', nx: -0.3, nz: -0.25, growth: 0.6, scale: 0.9, rot: 3 },
-    { uid: uid('pl'), plantId: 'javafern', nx: 0.28, nz: -0.1, growth: 0.7, scale: 1, rot: 1.3 },
-    { uid: uid('pl'), plantId: 'anubias', nx: -0.06, nz: 0.12, growth: 0.8, scale: 1, rot: 0.4 },
-    { uid: uid('pl'), plantId: 'moss', nx: 0.08, nz: 0.28, growth: 0.7, scale: 1, rot: 0 },
-    { uid: uid('pl'), plantId: 'moss', nx: -0.35, nz: 0.25, growth: 0.6, scale: 1.1, rot: 0 },
-    { uid: uid('pl'), plantId: 'crypt', nx: 0.42, nz: 0.18, growth: 0.7, scale: 1, rot: 0 },
+    // background: tall stems and ribbons
+    P('vallisneria', -0.46, -0.42, 0.85), P('vallisneria', -0.36, -0.44, 0.8), P('vallisneria', 0.44, -0.42, 0.8),
+    P('rotala', -0.22, -0.4, 0.95), P('rotala', 0.12, -0.42, 0.95), P('rotala', 0.28, -0.38, 0.85, 0.9),
+    P('amazon', -0.08, -0.36, 0.8, 1.1), P('amazon', 0.34, -0.3, 0.75),
+    // midground
+    P('javafern', 0.22, -0.12, 0.8), P('javafern', -0.4, -0.12, 0.75), P('crypt', 0.42, 0.12, 0.8), P('crypt', -0.18, 0.02, 0.7),
+    // foreground carpet & accents
+    P('anubias', -0.05, 0.14, 0.85), P('moss', 0.08, 0.3, 0.8, 1.2), P('moss', -0.34, 0.26, 0.7, 1.1), P('moss', 0.3, 0.28, 0.7),
   ];
   main.decor = [
-    { uid: uid('dc'), itemId: 'spiderwood', nx: 0.2, nz: -0.15, rot: 0.3, scale: 1.15 },
+    { uid: uid('dc'), itemId: 'spiderwood', nx: 0.2, nz: -0.15, rot: 0.3, scale: 1.3 },
+    { uid: uid('dc'), itemId: 'mopani', nx: -0.18, nz: -0.2, rot: 2.2, scale: 1.0 },
     { uid: uid('dc'), itemId: 'seiryu', nx: -0.3, nz: 0.05, rot: 0.6, scale: 1.1 },
     { uid: uid('dc'), itemId: 'dragon', nx: 0.36, nz: 0.12, rot: 2.2, scale: 0.85 },
     { uid: uid('dc'), itemId: 'river', nx: -0.1, nz: 0.3, rot: 1.2, scale: 0.7 },

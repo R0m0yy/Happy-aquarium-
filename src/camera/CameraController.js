@@ -86,13 +86,13 @@ export class CameraController {
       onDone,
       // outside the window at sunrise → through the room → reveal the tank
       path: [
-        new THREE.Vector3(this.room.windowRange[0] + 1.5, 2.6, -8.5),
-        new THREE.Vector3(this.room.windowRange[0] + 2.2, 2.0, -2.0),
+        new THREE.Vector3((this.room.windowRange[0] + this.room.windowRange[1]) / 2 - 0.55, 2.4, -8.5),
+        new THREE.Vector3((this.room.windowRange[0] + this.room.windowRange[1]) / 2 - 0.4, 2.0, -2.2),
         new THREE.Vector3(h.target.x - 2.5, 1.7, 2.6),
         this.posFrom(h.target, h.yaw, h.pitch, h.dist),
       ],
       look: [
-        new THREE.Vector3(this.room.windowRange[0] + 2.5, 1.8, 0),
+        new THREE.Vector3((this.room.windowRange[0] + this.room.windowRange[1]) / 2, 1.6, 0),
         new THREE.Vector3(h.target.x - 1.4, 1.4, 0),
         h.target.clone(),
         h.target.clone(),

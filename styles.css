@@ -395,3 +395,4 @@ input[type='range'] { width: 100%; accent-color: var(--cyan); }
   .clean-bar { flex-wrap: wrap; justify-content: center; width: calc(100vw - 16px); bottom: calc(150px + var(--sab)); }
   .photo-bar { flex-wrap: wrap; justify-content: center; width: calc(100vw - 16px); }
 }
+#ui.photo-hide #coach, #ui.photo-hide #toasts { opacity: 0; }

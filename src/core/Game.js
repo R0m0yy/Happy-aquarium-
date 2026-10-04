@@ -811,7 +811,7 @@ export class Game {
         this.later(0.15 + i * 0.45, () => {
           const hand = this.character.handWorld();
           const x = clamp(hand.x + randRange(-0.08, 0.08), this.aquarium.minX + 0.1, this.aquarium.maxX - 0.1);
-          this.food.drop(foodId, x, this.aquarium.frontZ - 0.14 - Math.random() * 0.12);
+          this.food.drop(foodId, x, this.aquarium.frontZ - 0.14 - Math.random() * 0.12, this.fish.list.filter((a) => a.rec.stage !== 'EGG').length);
           this.audio.sprinkle();
           if (i === 0) this.audio.splash();
         });
@@ -1473,7 +1473,7 @@ export class Game {
     this.mode = 'intro';
     this.ui.root.classList.add('hidden');
     this.introLight = 0;
-    this.timeOfDay = 0.25;
+    this.timeOfDay = 0.265;
     this.state.settings.timeMode = this.state.settings.timeMode ?? 'cycle';
     const title = document.getElementById('title-card');
     const skip = document.createElement('button');

@@ -107,6 +107,11 @@ export class RoomBuilder {
     rightWall.position.set(right, CEIL / 2, (front + BACK_Z) / 2);
     rightWall.receiveShadow = true;
     this.group.add(rightWall);
+    // front wall (behind the camera; seen during the intro fly-in)
+    const frontWall = new THREE.Mesh(new THREE.PlaneGeometry(W, CEIL), wallM);
+    frontWall.rotation.y = Math.PI;
+    frontWall.position.set(0, CEIL / 2, front);
+    this.group.add(frontWall);
     // ceiling
     const ceil = new THREE.Mesh(new THREE.PlaneGeometry(W, front - BACK_Z), new THREE.MeshStandardMaterial({ color: 0x2a221c, roughness: 1 }));
     ceil.rotation.x = Math.PI / 2;

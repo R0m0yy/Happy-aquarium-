@@ -80,7 +80,7 @@ export class Simulation {
     }
     const feeder = !!tank.equipment?.feeder;
     const hungerRate = (1 / 1500) * (f.stage === 'FRY' ? 0.6 : 1);
-    f.hunger = clamp(f.hunger + hungerRate * dt, 0, offline && feeder ? 0.4 : 1);
+    f.hunger = clamp(f.hunger + hungerRate * dt, 0, offline ? (feeder ? 0.4 : 0.85) : 1);
     if (offline && feeder && f.hunger > 0.38) f.hunger = 0.3;
     // happiness target
     const w = tank.water;

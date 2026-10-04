@@ -80,7 +80,7 @@ export class AquariumView {
     const { w, h, d } = this.dim;
     const env = this.scene.environment;
     this.glassMat = glassMaterial(env, { opacity: 0.05 });
-    const sideGlass = glassMaterial(env, { opacity: 0.09 });
+    const sideGlass = glassMaterial(env, { opacity: 0.03 });
     const front = new THREE.Mesh(new THREE.PlaneGeometry(w, h), this.glassMat);
     front.position.set(0, h / 2, d / 2);
     front.renderOrder = 10;
@@ -527,12 +527,12 @@ export class AquariumView {
     const W = 512, H = 256;
     const img = ctx.createImageData(W, H);
     const n = this.noise;
-    const thr = 0.78 - level * 0.62;
+    const thr = 0.86 - level * 0.55;
     for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
       const v = n.fbm(x * 0.012, y * 0.02, 4) * 0.75 + n(x * 0.08, y * 0.08) * 0.25;
       // algae prefers the lower glass and corners
       const bias = (y / H) * 0.18 + (Math.min(x, W - x) < 60 ? 0.08 : 0);
-      const a = level < 0.02 ? 0 : clamp((v + bias - thr) * 6, 0, 1);
+      const a = level < 0.02 ? 0 : clamp((v + bias - thr) * 4, 0, 0.9);
       const i = (y * W + x) * 4;
       const val = a > 0 ? Math.floor(clamp(a * 200 + n(x * 0.3, y * 0.3) * 40, 0, 230)) : 0;
       img.data[i] = img.data[i + 1] = img.data[i + 2] = val;
@@ -553,7 +553,7 @@ export class AquariumView {
     const img = ctx.getImageData(0, 0, W, H);
     const n = this.noise;
     const lvl = this.tank.algae.level;
-    const thr = 0.78 - lvl * 0.62;
+    const thr = 0.86 - lvl * 0.55;
     const inc = amount * 900;
     for (let y = 0; y < H; y += 1) for (let x = 0; x < W; x += 1) {
       const v = n.fbm(x * 0.012, y * 0.02, 2) * 0.75 + n(x * 0.08, y * 0.08) * 0.25 + (y / H) * 0.18;

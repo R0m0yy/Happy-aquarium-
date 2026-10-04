@@ -87,10 +87,11 @@ export class FoodSystem {
   }
 
   // Drop a pinch of food above the water at world (x, z).
-  drop(foodId, x, z) {
+  drop(foodId, x, z, eaters = 6) {
     const f = FOOD_BY_ID[foodId] ?? FOOD_BY_ID.flakes;
     const b = this.aq.bounds(0.06);
-    const n = f.count;
+    // a pinch sized to the number of mouths, so feeding is generous but not wasteful
+    const n = Math.max(f.kind === 'wafer' || f.kind === 'frozen' ? 1 : 5, Math.min(f.count, Math.round(f.count * Math.min(1, eaters / 9))));
     const kind = f.kind;
     for (let i = 0; i < n; i++) {
       const px = clamp(x + randRange(-0.12, 0.12), b.minX, b.maxX);
