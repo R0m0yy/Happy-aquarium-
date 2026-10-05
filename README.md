@@ -24,6 +24,14 @@ Useful URL flags for development:
 
 Your progress is saved locally in IndexedDB. Settings → Reset save erases it.
 
+### Single-file version
+
+`dist/aquaria.html` is the whole game in one self-contained HTML file: code, three.js and CSS are all inlined. You can open it directly from disk or upload it anywhere. To rebuild it after changes:
+
+```bash
+npm i --no-save esbuild && node tools/build-single.mjs
+```
+
 ## Controls
 
 | | Desktop | Touch |
