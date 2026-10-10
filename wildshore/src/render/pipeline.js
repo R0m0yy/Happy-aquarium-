@@ -69,6 +69,7 @@ export class Pipeline {
           vec2 uv = vUv;
           if (uUnder > 0.0) uv += vec2(sin(uv.y * 24.0 + uTime * 2.0), cos(uv.x * 20.0 + uTime * 1.7)) * 0.0022 * uUnder;
           vec3 c = texture2D(tColor, uv).rgb;
+          if (any(isnan(c)) || any(isinf(c))) c = vec3(0.0);
           gl_FragDepth = texture2D(tDepth, uv).r;
           // subtle grade
           float l = dot(c, vec3(0.2126, 0.7152, 0.0722));

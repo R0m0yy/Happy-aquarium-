@@ -56,6 +56,7 @@ export class Game {
     this.env.dayLengthMin = settings.dayLength || 24;
     this.input = new Input(canvas);
     this.rig = new CameraRig(innerWidth / innerHeight);
+    if (this.input.isTouch) { this.rig.zoom.explore = 24; this.rig.zoom.hunt = 10; }
     this.audio = new Audio();
     this.inv = new Inventory();
     this.surv = new Survival();
@@ -257,6 +258,7 @@ export class Game {
     p.pos.set(data.player.x, data.player.y, data.player.z);
     p.heading = data.player.heading;
     p.state = data.player.state === 'dive' ? 'swim' : data.player.state || 'ground';
+    this.rig.yaw = this.rig.targetYaw = 0;
     this.equip(null);
     if (data.player.equipped) { const it = this.inv.find(data.player.equipped); if (it) this.equipUid(it.uid); }
     this.rig.focus.copy(p.pos);
@@ -305,8 +307,16 @@ export class Game {
 
   // ------------------------------------------------------------------ main update
   update(dtRaw) {
+    dtRaw = Math.max(0, dtRaw);
     let dt = Math.min(dtRaw, 0.05);
     this.input.update();
+    if (!this.started) {
+      // cinematic orbit behind the title screen
+      this.rig.setMode('title');
+      this.rig.targetYaw += dt * 0.035;
+      this.env.update(dt, dt / 60 * 0.3);
+      this.rig.update(dt, _v.set(HOME.camp.x + 10, 2, HOME.camp.z + 18), null, this.ocean);
+    }
     if (!this.started || this.paused) {
       this.updateWorldUniforms(dt * 0.3);
       this.render(dt);

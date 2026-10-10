@@ -148,6 +148,7 @@ export function populateWorld(scene, quality) {
     palm: new Species('palm', mats, [0, 1, 2, 3, 4, 5].map((i) => F.buildPalm(100 + i))),
     hardwood: new Species('hardwood', mats, [0, 1, 2, 3].map((i) => F.buildHardwood(200 + i))),
     mangrove: new Species('mangrove', mats, [0, 1, 2].map((i) => F.buildHardwood(300 + i, { scale: 0.75, mangrove: true }))),
+    vine: new Species('vine', mats, [0, 1, 2].map((i) => F.buildVine(450 + i)), { chunk: 64, lodDist: 150, castShadow: false }),
     shrub: new Species('shrub', mats, [0, 1, 2, 3].map((i) => F.buildShrub(400 + i)), { chunk: 64, lodDist: 220 }),
     fern: new Species('fern', mats, [0, 1, 2].map((i) => F.buildFern(500 + i)), { chunk: 64, lodDist: 160, castShadow: false }),
     broadleaf: new Species('broadleaf', mats, [0, 1, 2].map((i) => F.buildBroadleaf(600 + i)), { chunk: 64, lodDist: 180 }),
@@ -216,7 +217,7 @@ export function populateWorld(scene, quality) {
           continue;
         }
         if (beach) {
-          const pDens = isl.mangrove ? 0.02 : isl.rocky ? 0.015 : isl.atoll ? 0.09 : 0.06;
+          const pDens = isl.mangrove ? 0.02 : isl.rocky ? 0.015 : isl.atoll ? 0.09 : 0.075;
           if (roll < pDens) {
             const pal = place(sp.palm, ri.int(0, 5), x, z, { ...opt, rot: awayAng + ri.range(-0.6, 0.6), scale: ri.range(0.85, 1.15), collide: 0.45, data: { res: 'palm', hp: 5 } });
             pal.nutIds = [];
@@ -225,6 +226,7 @@ export function populateWorld(scene, quality) {
           if (roll < pDens + 0.012 && h < 1.6) { place(sp.driftwood, ri.int(0, 3), x, z, { ...opt, interact: 1.2, data: { res: 'driftwood' } }); continue; }
           if (roll < pDens + 0.05 && h < 1.4) { place(sp.shells, ri.int(0, 2), x, z, { ...opt, interact: 0.8, data: { res: 'shells' } }); continue; }
           if (roll < pDens + 0.065) { place(sp.rock, ri.int(0, 3), x, z, { ...opt, scale: ri.range(0.25, 0.6), dy: -0.1, align: 0.5, interact: 0.8, data: { res: 'stone' } }); continue; }
+          if (h > 1.0 && roll < pDens + 0.15 && n1 > -0.25) { place(sp.vine, ri.int(0, 2), x, z, { ...opt, scale: ri.range(0.8, 1.4) }); continue; }
           if (h > 1.4 && roll < pDens + 0.2 && n1 > -0.1) { place(sp.grass, 2, x, z, { ...opt, scale: ri.range(0.8, 1.3) }); continue; }
           if (h > 1.6 && roll < pDens + 0.24) { place(sp.shrub, ri.int(0, 3), x, z, { ...opt, scale: ri.range(0.7, 1.1), interact: 1, data: { res: 'fiber' } }); continue; }
           continue;
@@ -253,14 +255,14 @@ export function populateWorld(scene, quality) {
         if (!shelf) { if (roll < 0.004) place(sp.reefRock, ri.int(0, 2), x, z, { ...opt, scale: ri.range(1, 2.5), dy: -0.3 }); continue; }
         const reefZone = isl.atoll ? 1 : isl.id === 'home' ? smoothstep(150, 40, Math.hypot(x - HOME.reef.x, z - HOME.reef.z)) * 0.85 + 0.25 : 0.35;
         const grassBed = fbm2(x * 0.035 + 9, z * 0.035, 3) > 0.15 && h > -6;
-        const cd = (0.1 + 0.5 * smoothstep(-0.05, 0.4, n1)) * reefZone * (isl.mangrove ? 0.25 : 1);
+        const cd = (0.25 + 1.1 * smoothstep(-0.1, 0.35, n1)) * reefZone * (isl.mangrove ? 0.25 : 1);
         if (grassBed && roll < 0.35) { place(sp.seagrass, ri.int(0, 1), x, z, { ...opt, scale: ri.range(0.8, 1.3) }); continue; }
         let acc = 0;
-        if (roll < (acc += cd * 0.12)) { place(sp.brain, ri.int(0, 4), x, z, { ...opt, scale: ri.range(0.7, 1.4), dy: -0.05, align: 0.5, interact: 0.6, data: { res: 'coral' } }); continue; }
-        if (roll < (acc += cd * 0.12)) { place(sp.staghorn, ri.int(0, 3), x, z, { ...opt, scale: ri.range(0.8, 1.6), dy: -0.05 }); continue; }
-        if (roll < (acc += cd * 0.04)) { place(sp.table, ri.int(0, 2), x, z, { ...opt, scale: ri.range(0.8, 1.4), dy: -0.05 }); continue; }
-        if (roll < (acc += cd * 0.06)) { place(sp.fan, ri.int(0, 2), x, z, { ...opt, scale: ri.range(0.8, 1.4) }); continue; }
-        if (roll < (acc += cd * 0.05)) { place(sp.anemone, ri.int(0, 2), x, z, { ...opt, scale: ri.range(0.8, 1.6) }); continue; }
+        if (roll < (acc += cd * 0.12)) { place(sp.brain, ri.int(0, 4), x, z, { ...opt, scale: ri.range(1.0, 2.2), dy: -0.05, align: 0.5, interact: 0.6, data: { res: 'coral' } }); continue; }
+        if (roll < (acc += cd * 0.12)) { place(sp.staghorn, ri.int(0, 3), x, z, { ...opt, scale: ri.range(1.2, 2.4), dy: -0.05 }); continue; }
+        if (roll < (acc += cd * 0.04)) { place(sp.table, ri.int(0, 2), x, z, { ...opt, scale: ri.range(1.0, 2.0), dy: -0.05 }); continue; }
+        if (roll < (acc += cd * 0.06)) { place(sp.fan, ri.int(0, 2), x, z, { ...opt, scale: ri.range(1.0, 1.8) }); continue; }
+        if (roll < (acc += cd * 0.05)) { place(sp.anemone, ri.int(0, 2), x, z, { ...opt, scale: ri.range(1.2, 2.2) }); continue; }
         if (roll < (acc += cd * 0.05)) { place(sp.urchin, ri.int(0, 1), x, z, { ...opt, scale: ri.range(0.8, 1.4), interact: 0.6, data: { res: 'urchin' } }); continue; }
         if (roll < (acc += cd * 0.03)) { place(sp.reefRock, ri.int(0, 2), x, z, { ...opt, scale: ri.range(0.4, 1.4), dy: -0.2, align: 0.4 }); continue; }
         if (isl.atoll && roll < acc + 0.006) { place(sp.clam, 0, x, z, { ...opt, scale: ri.range(0.8, 1.3), align: 0.6, interact: 0.8, data: { res: 'clam' } }); continue; }

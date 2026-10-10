@@ -12,6 +12,7 @@ const MODES = {
   underwater: { pitch: 30, dist: 8.5, min: 5, max: 14, fov: 50, lead: 1 },
   sleep: { pitch: 58, dist: 12, min: 8, max: 20, fov: 36, lead: 0 },
   map: { pitch: 80, dist: 900, min: 900, max: 900, fov: 45, lead: 0 },
+  title: { pitch: 24, dist: 78, min: 78, max: 78, fov: 40, lead: 0 },
 };
 
 export class CameraRig {
@@ -20,7 +21,7 @@ export class CameraRig {
     this.mode = 'explore';
     this.yaw = 0; // radians, 0 = looking north (-z)
     this.targetYaw = 0;
-    this.zoom = { explore: 30, hunt: 11.5, build: 24, boat: 30, underwater: 8.5, sleep: 12, map: 900 };
+    this.zoom = { explore: 30, hunt: 11.5, build: 24, boat: 30, underwater: 8.5, sleep: 12, map: 900, title: 78 };
     this.pitch = 52;
     this.dist = 17;
     this.fov = 38;

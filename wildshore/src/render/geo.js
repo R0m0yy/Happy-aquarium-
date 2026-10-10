@@ -20,6 +20,19 @@ export function normalizeAttrs(g, color = null) {
     g.setAttribute('color', new THREE.BufferAttribute(c, 3));
   }
   for (const k of Object.keys(g.attributes)) if (!['position', 'normal', 'uv', 'color'].includes(k)) g.deleteAttribute(k);
+  sanitizeNormals(g);
+  return g;
+}
+
+// degenerate triangles (poles, collapsed displacement) yield NaN normals that poison the HDR buffer
+export function sanitizeNormals(g) {
+  const nr = g.attributes.normal;
+  if (!nr) return g;
+  const a = nr.array;
+  for (let i = 0; i < a.length; i += 3) {
+    const l = Math.hypot(a[i], a[i + 1], a[i + 2]);
+    if (!(l > 1e-6)) { a[i] = 0; a[i + 1] = 1; a[i + 2] = 0; }
+  }
   return g;
 }
 
@@ -197,6 +210,7 @@ export function rockGeometry(rng, { detail = 3, sx = 1, sy = 0.7, sz = 1, rough 
     p.setXYZ(i, _v.x, _v.y, _v.z);
   }
   g.computeVertexNormals();
+  sanitizeNormals(g);
   // uv via box projection + colours
   const n = g.attributes.normal;
   const uv = new Float32Array(p.count * 2), col = new Float32Array(p.count * 3);

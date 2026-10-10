@@ -4,7 +4,7 @@ import { clamp, lerp, smoothstep, rng } from '../util/math.js';
 
 const C = (h) => new THREE.Color(h);
 const PAL = {
-  night: { z: C(0x030712), h: C(0x0d1830), sun: C(0x6d82b8) },
+  night: { z: C(0x06122a), h: C(0x1a2a4a), sun: C(0x6d82b8) },
   twilight: { z: C(0x1d2b52), h: C(0xd9785a), sun: C(0xff7a3a) },
   golden: { z: C(0x4a7bc0), h: C(0xf6c08a), sun: C(0xffc285) },
   day: { z: C(0x2a6fd0), h: C(0xb5dcf3), sun: C(0xfff4e2) },
@@ -120,12 +120,12 @@ export class Environment {
     this.lightDir.normalize();
     this.lightColor.copy(this.sunColor).lerp(tmpA.set(0x8fa6d8), moonMix);
     const sunI = smoothstep(-0.04, 0.2, e) * 3.1 * (1 - dk * 0.75);
-    const moonI = moonMix * 0.42 * (1 - dk * 0.7);
+    const moonI = moonMix * 0.75 * (1 - dk * 0.7);
     this.lightIntensity = sunI + moonI;
 
     this.hemiSky.copy(this.skyZenith).lerp(this.skyHorizon, 0.4);
-    this.hemiGround.set(0x8a7a5c).multiplyScalar(0.3 + 0.7 * this.daylight);
-    this.hemiIntensity = 0.35 + 1.25 * this.daylight + 0.25 * this.night;
+    this.hemiGround.set(0x8a7a5c).multiplyScalar(0.35 + 0.65 * this.daylight);
+    this.hemiIntensity = 0.55 + 1.1 * this.daylight + 0.35 * this.night;
 
     this.fogColor.copy(this.skyHorizon).lerp(this.skyZenith, 0.18);
     this.fogDensity = 0.0009 + this.w.fog * 0.012 + this.w.rain * 0.003;

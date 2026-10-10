@@ -35,7 +35,7 @@ export const ISLAND_BY_ID = Object.fromEntries(ISLANDS.map((i) => [i.id, i]));
 
 // Hand-placed features on the home island (world coords)
 export const HOME = {
-  spawn: { x: 5, z: 84 },
+  spawn: { x: 5, z: 89 },
   camp: { x: 0, z: 74 },
   lookout: { x: -34, z: -42, r: 26, h: 15 },
   spring: { x: 16, z: -6, r: 6.5, depth: 1.4 },

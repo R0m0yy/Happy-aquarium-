@@ -277,7 +277,7 @@ export function fernTexture() {
       const y = 6 + t * (H - 10);
       const len = (W * 0.46) * Math.sin(Math.min(1, 0.15 + t) * Math.PI * 0.95);
       for (const side of [-1, 1]) {
-        ctx.fillStyle = `hsl(${100 + r() * 16},${50 + r() * 10}%,${24 + r() * 10}%)`;
+        ctx.fillStyle = `hsl(${96 + r() * 16},${50 + r() * 10}%,${30 + r() * 12}%)`;
         // pinna made of small lobes
         const steps = 6;
         for (let s = 0; s < steps; s++) {
@@ -326,7 +326,7 @@ export function leafClusterTexture(kind = 'shrub') {
   return memo('leaves_' + kind, () => {
     const S = 256;
     const c = canvas(S, S), ctx = c.getContext('2d');
-    const r = rng(kind === 'shrub' ? 303 : kind === 'canopy' ? 304 : 305);
+    const r = rng(kind === 'shrub' ? 303 : kind === 'canopy' ? 304 : kind === 'vine' ? 306 : 305);
     const hueBase = kind === 'mangrove' ? 88 : kind === 'canopy' ? 104 : 98;
     for (let i = 0; i < (kind === 'canopy' ? 190 : 140); i++) {
       const a = r() * Math.PI * 2, d = Math.sqrt(r()) * S * 0.42;
@@ -334,16 +334,16 @@ export function leafClusterTexture(kind = 'shrub') {
       const ang = a + r() - 0.5;
       const len = (kind === 'canopy' ? 13 : 16) + r() * 10;
       const shade = d / (S * 0.42);
-      ctx.fillStyle = `hsl(${hueBase + r() * 20},${44 + r() * 18}%,${18 + (1 - shade) * 14 + r() * 10}%)`;
+      ctx.fillStyle = `hsl(${hueBase + r() * 20},${46 + r() * 18}%,${30 + (1 - shade) * 16 + r() * 12}%)`;
       ctx.save(); ctx.translate(x, y); ctx.rotate(ang);
       ctx.beginPath(); ctx.ellipse(len * 0.5, 0, len * 0.5, len * 0.22, 0, 0, Math.PI * 2); ctx.fill();
       ctx.restore();
     }
-    if (kind === 'shrub') {
-      for (let i = 0; i < 9; i++) {
+    if (kind === 'shrub' || kind === 'vine') {
+      for (let i = 0; i < (kind === 'vine' ? 14 : 9); i++) {
         const a = r() * Math.PI * 2, d = r() * S * 0.35;
         const x = S / 2 + Math.cos(a) * d, y = S / 2 + Math.sin(a) * d;
-        const col = r() < 0.5 ? '#e0473a' : r() < 0.5 ? '#f2a03a' : '#f4f0e6';
+        const col = kind === 'vine' ? (r() < 0.7 ? '#e070c0' : '#f4e0f0') : r() < 0.5 ? '#e0473a' : r() < 0.5 ? '#f2a03a' : '#f4f0e6';
         for (let p = 0; p < 5; p++) {
           ctx.fillStyle = col;
           ctx.beginPath(); ctx.ellipse(x + Math.cos(p * 1.256) * 4, y + Math.sin(p * 1.256) * 4, 4.5, 2.6, p * 1.256, 0, Math.PI * 2); ctx.fill();

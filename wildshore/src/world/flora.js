@@ -29,6 +29,7 @@ export function floraMaterials() {
     hardBark: mk({ map: hbark, bumpMap: hbark, bumpScale: 3, roughness: 0.95, vertexColors: true }, { wind: 0.5, windMode: 'tree', fade: true }),
     canopy: mk({ map: leafClusterTexture('canopy'), alphaTest: 0.42, side: THREE.DoubleSide, roughness: 0.7, vertexColors: true }, { wind: 0.7, windMode: 'tree', fade: true }),
     mangroveLeaf: mk({ map: leafClusterTexture('mangrove'), alphaTest: 0.42, side: THREE.DoubleSide, roughness: 0.7, vertexColors: true }, { wind: 0.6, windMode: 'tree', fade: true }),
+    vine: mk({ map: leafClusterTexture('vine'), alphaTest: 0.42, side: THREE.DoubleSide, roughness: 0.6, vertexColors: true }, { wind: 0.3, windMode: 'plant' }),
     shrub: mk({ map: leafClusterTexture('shrub'), alphaTest: 0.42, side: THREE.DoubleSide, roughness: 0.68, vertexColors: true }, { wind: 1, windMode: 'plant', fade: true }),
     fern: mk({ map: fernTexture(), alphaTest: 0.4, side: THREE.DoubleSide, roughness: 0.72, vertexColors: true }, { wind: 1, windMode: 'plant' }),
     broadleaf: mk({ map: broadleafTexture(), alphaTest: 0.4, side: THREE.DoubleSide, roughness: 0.45, vertexColors: true }, { wind: 1, windMode: 'plant', fade: true }),
@@ -170,6 +171,19 @@ export function buildShrub(seed) {
     cards.push(card(center, pos, r.range(0.9, 1.3) * s, new THREE.Euler(r.range(-1.2, 1.2), r() * Math.PI, r.range(-0.4, 0.4)), C(0xffffff).multiplyScalar(0.8 + r() * 0.3), V(0, 0, 0)));
   }
   return { parts: { shrub: merge(cards) }, radius: 0.4 * s, height: 1.2 * s };
+}
+
+// creeping beach morning-glory ground cover
+export function buildVine(seed) {
+  const r = rng(seed);
+  const cards = [];
+  const n = r.int(5, 8);
+  for (let i = 0; i < n; i++) {
+    const pos = V(r.range(-1.4, 1.4), 0.06 + r() * 0.08, r.range(-1.4, 1.4));
+    const g = card(V(0, -2, 0), pos, r.range(1.0, 1.7), new THREE.Euler(-Math.PI / 2 + r.range(-0.25, 0.25), r() * Math.PI, 0), C(0xffffff).multiplyScalar(0.85 + r() * 0.3), V(pos.x, -3, pos.z));
+    cards.push(g);
+  }
+  return { parts: { vine: merge(cards) }, radius: 0, height: 0.2 };
 }
 
 export function buildFern(seed) {

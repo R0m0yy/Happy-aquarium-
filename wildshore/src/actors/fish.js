@@ -105,7 +105,7 @@ export class FishSystem {
     } catch (e) { console.warn('fish model failed', e); }
     const defs = {};
     if (barraGeo) {
-      const mat = swimMaterial(new THREE.MeshStandardMaterial({ map: barraMat.map, normalMap: barraMat.normalMap, roughness: 0.45, metalness: 0.15 }));
+      const mat = swimMaterial(new THREE.MeshStandardMaterial({ map: barraMat.map, normalMap: barraMat.normalMap, color: 0xffffff, roughness: 0.35, metalness: 0.1, emissive: 0x223038 }));
       defs.barramundi = { geo: barraGeo, mat };
     }
     const { mergeGeometries } = await import('three/addons/utils/BufferGeometryUtils.js');

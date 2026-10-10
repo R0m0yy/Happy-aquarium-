@@ -178,8 +178,8 @@ export class FX {
           p.x += uTime * 0.12;
           vec3 wp = uCenter + mod(p - uCenter + box * 0.5, box) - box * 0.5;
           vec4 mv = viewMatrix * vec4(wp, 1.0);
-          gl_PointSize = (1.5 + position.z * 2.5) * 120.0 / -mv.z;
-          vA = 0.5;
+          gl_PointSize = (0.6 + position.z * 1.4) * 9.0 / -mv.z * 6.0;
+          vA = 0.35;
           gl_Position = projectionMatrix * mv;
         }`,
       fragmentShader: `uniform float uOn, uLight; varying float vA; void main(){ vec2 c = gl_PointCoord - 0.5; float a = smoothstep(0.5, 0.0, length(c)) * vA * uOn; if (a < 0.01) discard; gl_FragColor = vec4(vec3(0.75, 0.9, 0.9) * uLight, a);
@@ -206,7 +206,7 @@ export class FX {
           float edge = smoothstep(0.0, 0.35, vUv.x) * smoothstep(1.0, 0.65, vUv.x);
           float fade = smoothstep(0.0, 0.7, vUv.y);
           float flick = 0.6 + 0.4 * sin(uTime * 0.7 + vSeed * 20.0);
-          float a = edge * fade * flick * 0.13 * uOn;
+          float a = edge * fade * flick * 0.055 * uOn;
           gl_FragColor = vec4(uColor * a, 1.0);
           #include <tonemapping_fragment>
           #include <colorspace_fragment>
@@ -214,7 +214,7 @@ export class FX {
       transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
     });
     for (let i = 0; i < 14; i++) {
-      const g = new THREE.PlaneGeometry(1.2 + Math.random() * 1.8, 16, 1, 1);
+      const g = new THREE.PlaneGeometry(0.5 + Math.random() * 1.2, 16, 1, 1);
       g.translate(0, -8, 0);
       const s = new Float32Array(4).fill(Math.random());
       g.setAttribute('seed', new THREE.BufferAttribute(s, 1));

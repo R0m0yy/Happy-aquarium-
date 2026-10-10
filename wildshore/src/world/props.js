@@ -156,7 +156,7 @@ export function buildFallenFrond(seed) {
 }
 
 // ---------- coral & underwater life ----------
-const CORAL_COLS = [0xd9a066, 0xc76b8f, 0x8f6fc7, 0xe0c35a, 0x6fb08a, 0xe07a5a, 0x7aa3d6, 0xc9b38c];
+const CORAL_COLS = [0xf0a050, 0xe0508f, 0x9a6ff0, 0xf5d040, 0x50d08a, 0xff6a4a, 0x5aa8ff, 0xe8c080, 0xff8ac0];
 
 export function buildBrainCoral(seed) {
   const r = rng(seed);
@@ -173,9 +173,9 @@ export function buildBrainCoral(seed) {
   g.computeVertexNormals();
   const base = C(r.pick(CORAL_COLS));
   g = normalizeAttrs(g, base);
-  const c = g.attributes.color;
+  const c = g.attributes.color, pp = g.attributes.position;
   for (let i = 0; i < c.count; i++) {
-    const k = 0.75 + 0.35 * Math.abs(noise3(p.getX(i) * 6, p.getY(i) * 6, p.getZ(i) * 6 + sd));
+    const k = 0.75 + 0.35 * Math.abs(noise3(pp.getX(i) * 6, pp.getY(i) * 6, pp.getZ(i) * 6 + sd));
     c.setXYZ(i, base.r * k, base.g * k, base.b * k);
   }
   return { parts: { coral: g }, radius: s * 0.8, height: s * 0.6 };

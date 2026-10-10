@@ -76,6 +76,7 @@ export class Ocean {
       uFresh: { value: 0 },
       uRipples: { value: Array.from({ length: 8 }, () => new THREE.Vector4(0, 0, -100, 0)) },
       uDetail: { value: quality.waterDetail },
+      uFoamAmt: { value: 0.85 },
     };
     this.material = this.makeMaterial(this.uniforms);
     this.mesh = new THREE.Mesh(this.geometry, this.material);
@@ -105,9 +106,9 @@ export class Ocean {
     u.uSwash = { value: 0 };
     u.uLevel = { value: pond.level };
     u.uFresh = { value: 1 };
-    u.uAbsorb = { value: new THREE.Vector3(0.6, 0.22, 0.3) };
-    u.uShallowCol = { value: new THREE.Color(0x6aa877) };
-    u.uDeepCol = { value: new THREE.Color(0x1b3f2c) };
+    u.uAbsorb = { value: new THREE.Vector3(0.4, 0.16, 0.22) };
+    u.uShallowCol = { value: new THREE.Color(0x24503a) };
+    u.uDeepCol = { value: new THREE.Color(0x0c2016) };
     const geo = new THREE.CircleGeometry(pond.r * 1.6, 40);
     geo.rotateX(-Math.PI / 2);
     const m = new THREE.Mesh(geo, this.makeMaterial(u));
@@ -297,6 +298,7 @@ void main(){
 
 const OCEAN_FS = /* glsl */`
 #include <packing>
+uniform float uFoamAmt;
 uniform float uTime, uWaveScale, uLevel, uSwash, uLightI, uFogDensity, uDaylight, uNight, uRain, uCloud, uUnderwater, uFresh, uDetail;
 uniform sampler2D uSceneColor, uSceneDepth, uNormalMap;
 uniform vec2 uResolution, uNearFar;
@@ -391,6 +393,7 @@ void main(){
   float rz = viewZAt(ruv);
   if (rz < vViewZ) { ruv = suv; rz = sceneZ; }
   vec3 under = texture2D(uSceneColor, ruv).rgb;
+  if (any(isnan(under)) || any(isinf(under))) under = uDeepCol;
   vec3 bottom = worldAt(ruv);
   float thick = max(rz - vViewZ, 0.0) * length(vec3((ruv*2.0-1.0), 1.0)) * 0.8;
   float vdepth = clamp(uLevel - bottom.y, 0.0, 60.0);
@@ -427,15 +430,15 @@ void main(){
   if (uFresh < 0.5) {
     // contact foam where water is thin over the seabed / rocks
     float fn = fbm(p * 0.9 + vec2(uTime * 0.15, -uTime * 0.1));
-    float lace = smoothstep(0.42, 0.62, fbm(p * 3.2 + vec2(uTime * 0.3, uTime * 0.2)));
-    float edge = 1.0 - smoothstep(0.0, 0.025 + fn * 0.09, thickRaw);
-    float edge2 = (1.0 - smoothstep(0.0, 0.18 + fn * 0.2, thickRaw)) * lace;
-    foam += edge * 0.8 + edge2 * 0.55;
+    float lace = smoothstep(0.5, 0.68, fbm(p * 2.6 + vec2(uTime * 0.25, uTime * 0.18)));
+    float edge = 1.0 - smoothstep(0.0, 0.03 + fn * 0.05, thickRaw);
+    float edge2 = (1.0 - smoothstep(0.02, 0.14 + fn * 0.1, thickRaw)) * lace;
+    foam += edge * 0.5 + edge2 * 0.32;
     // rolling surf lines over shallow sand
-    if (vDepth < 2.8 && vDepth > -0.5) {
-      float wave = sin(vDepth * 3.4 - uTime * 0.9 * 1.0 + fn * 2.2);
-      float band = smoothstep(0.9, 0.99, wave) * (1.0 - smoothstep(0.3, 2.2, vDepth));
-      foam += band * smoothstep(0.45, 0.7, fbm(p * 1.3 - uTime * 0.2)) * 0.8 * min(1.4, uWaveScale + 0.2);
+    if (vDepth < 2.5 && vDepth > -0.5) {
+      float wave = sin(vDepth * 3.4 - uTime * 0.9 + fn * 2.2);
+      float band = smoothstep(0.95, 0.995, wave) * (1.0 - smoothstep(0.3, 2.0, vDepth));
+      foam += band * lace * 0.6 * min(1.4, uWaveScale + 0.2);
     }
     // whitecaps on steep crests (storms)
     foam += smoothstep(0.32, 0.55, vCrest * (0.6 + 0.6 * fn)) * smoothstep(1.0, 1.6, uWaveScale) * 0.9;
@@ -444,7 +447,7 @@ void main(){
     foam *= 0.65 + 0.35 * bubbles;
   }
   vec3 foamCol = vec3(0.95, 0.98, 1.0) * (uLightI * 0.28 + 0.12 + uDaylight * 0.2);
-  col = mix(col, foamCol, foam * 0.75);
+  col = mix(col, foamCol, foam * 0.62 * uFoamAmt);
 
   // ---- atmospheric fog
   float fogF = 1.0 - exp(-uFogDensity * uFogDensity * dist * dist);

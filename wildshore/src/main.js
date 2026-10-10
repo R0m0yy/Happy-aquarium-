@@ -38,7 +38,7 @@ function fail(e) {
   let last = performance.now();
   window.__frames = 0;
   const loop = (now) => {
-    const dt = (now - last) / 1000;
+    const dt = Math.max(0, (now - last) / 1000);
     last = now;
     try { game.update(dt); } catch (e) { console.error(e); }
     window.__frames++;
