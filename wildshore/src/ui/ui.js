@@ -406,7 +406,7 @@ export class UI {
     html += `<div class="grid">${inv.items.map((it) => slot(it, 'inv')).join('')}${'<div class="islot empty"></div>'.repeat(Math.max(0, inv.slots - inv.items.length))}</div>`;
     if (storage && this.storage) {
       const st = this.storage.storage;
-      html += `<h4>${STRUCTURES[this.storage.type].name} storage — tap an item to move it</h4><div class="grid">${st.items.map((it) => slot(it, 'store')).join('')}${'<div class="islot empty"></div>'.repeat(Math.max(0, st.slots - st.items.length))}</div>`;
+      html += `<h4>${this.storage.name || STRUCTURES[this.storage.type].name + ' storage'} — tap an item to move it</h4><div class="grid">${st.items.map((it) => slot(it, 'store')).join('')}${'<div class="islot empty"></div>'.repeat(Math.max(0, st.slots - st.items.length))}</div>`;
     }
     const sel = this.sel && (inv.findUid(this.sel) || this.storage?.storage.findUid(this.sel));
     if (sel) {

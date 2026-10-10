@@ -146,6 +146,8 @@ export class Game {
   }
 
   // ------------------------------------------------------------------ world queries
+  islandAt(x, z) { return nearestIsland(x, z).island.id; }
+
   groundAt(x, z) {
     const t = terrainHeight(x, z);
     const f = this.structures.floorAt(x, z, this.player ? this.player.pos.y : t);
@@ -635,6 +637,7 @@ export class Game {
       const d = Math.hypot(b.x - p.pos.x, b.z - p.pos.z);
       if (d < b.def.len * 0.6 + 1.2) {
         add(d, `Board ${BOAT_DEFS[b.type].name}`, () => this.boardBoat(b), 1);
+        add(d + 0.2, `Open cargo (${b.cargo.items.length}/${b.cargo.slots})`, () => this.ui?.openStorage({ type: 'boat', name: BOAT_DEFS[b.type].name + ' cargo', storage: b.cargo }), 0.2);
         if (b.hp < b.def.hp - 1) add(d + 0.3, `Repair boat (${Math.round(b.hp / b.def.hp * 100)}%)`, () => this.repairBoat(b), 0.5);
       }
     }
@@ -721,6 +724,10 @@ export class Game {
       const n = Math.floor(d.water);
       if (n >= 1) acts.push({ label: `Collect rain water (${n})`, act: () => this.collectRain(s), pri: 1 });
       else acts.push({ label: 'Rain collector (empty)', act: () => this.ui?.toast('Wait for rain to fill the collector.'), pri: -1 });
+    }
+    if (s.type === 'snare') {
+      if (d.caught) acts.push({ label: 'Collect snared game', act: () => { this.give(d.caught === 'crab' ? { crab: 1 } : { rawMeat: 1, bone: 1 }); d.caught = false; }, pri: 1.5 });
+      else acts.push({ label: 'Snare is set (leave the area)', act: () => this.ui?.toast('Snares work while nobody is nearby. Check back later.'), pri: -1 });
     }
     if (s.storage) acts.push({ label: `Open ${s.type === 'woodenHut' ? 'hut storage' : 'basket'}`, act: () => this.ui?.openStorage(s), pri: 0.8 });
     if (def.shelter) acts.push({ label: `Sleep in the ${def.name.toLowerCase()}`, act: () => this.sleep(def.shelter), pri: this.env.night > 0.5 || this.surv.energy < 40 ? 1.2 : 0.1 });
@@ -1111,7 +1118,7 @@ export class Game {
         const water = this.ocean.heightAt(pr.pos.x, pr.pos.z);
         if (!pr.inWater && pr.pos.y < water) { pr.inWater = true; this.fx.splash(pr.pos.x, water, pr.pos.z, 0.3); this.audio.splash(0.3); }
         // hit animals
-        const a = this.wildlife.hitTest(pr.pos.clone().addScaledVector(pr.vel, -dt), pr.vel.clone().normalize(), pr.vel.length() * dt + 0.6, 0.6);
+        const a = this.wildlife.hitTest(pr.pos.clone().addScaledVector(pr.vel, -dt), pr.vel.clone().normalize(), pr.vel.length() * dt + 0.6, 0.6, null, false);
         if (a) {
           a.hit(pr.dmg, this.player);
           if (a.dead) this.onKill(a);

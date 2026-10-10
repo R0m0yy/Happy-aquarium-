@@ -57,7 +57,6 @@ export const ITEMS = {
   arrow: { name: 'Arrows', icon: 'arrow', w: 0.05, stack: 30, cat: 'ammo', desc: 'Flint-tipped.' },
   hammer: { name: 'Stone Hammer', icon: 'hammer', w: 1, tool: 'hammer', dur: 80, cat: 'tool', desc: 'Build, repair and upgrade structures.' },
   torch: { name: 'Torch', icon: 'torch', w: 0.5, tool: 'torch', dur: 240, cat: 'tool', burn: true, desc: 'Light in the dark. Burns out.' },
-  trap: { name: 'Snare Trap', icon: 'trap', w: 0.8, stack: 5, cat: 'tool', place: 'trap', desc: 'Place on animal trails.' },
 };
 
 export const TOOL_IDS = Object.keys(ITEMS).filter((k) => ITEMS[k].tool);
@@ -79,7 +78,6 @@ export const RECIPES = [
   { id: 'fishingRod', out: 'fishingRod', n: 1, in: { stick: 2, rope: 2, shell: 1 }, time: 3, cat: 'tools' },
   { id: 'bow', out: 'bow', n: 1, in: { hardwood: 1, rope: 2 }, tools: ['knife'], time: 4, cat: 'weapons' },
   { id: 'arrow', out: 'arrow', n: 5, in: { stick: 2, flint: 1, fiber: 2 }, alt: { stick: 2, bone: 1, fiber: 2 }, tools: ['knife'], time: 3, cat: 'weapons' },
-  { id: 'trap', out: 'trap', n: 1, in: { stick: 3, rope: 2 }, tools: ['knife'], time: 3, cat: 'tools' },
   { id: 'clayPot', out: 'clayPot', n: 1, in: { clay: 3 }, near: 'campfire', time: 5, cat: 'tools' },
   { id: 'aloe', out: 'aloe', n: 2, in: { fiber: 2, fruit: 1 }, time: 2, cat: 'basics' },
 ];
@@ -95,6 +93,7 @@ export const STRUCTURES = {
   woodenHut: { name: 'Stilt Hut', in: { log: 8, stick: 8, palmLeaf: 16, rope: 6 }, hp: 220, r: 3.0, desc: 'A raised hut with a thatched roof. Best rest and storm protection.', place: 'land', buildTime: 12, shelter: 1.0 },
   raisedPlatform: { name: 'Raised Platform', in: { log: 6, stick: 6, rope: 4 }, hp: 160, r: 2.4, desc: 'A level deck on stilts. Stand and build on it.', place: 'any', buildTime: 8, floor: 1.1 },
   dock: { name: 'Fishing Dock', in: { log: 6, stick: 6, rope: 4 }, hp: 160, r: 1.6, desc: 'A jetty into the water. Fish and moor boats.', place: 'shore', buildTime: 8, floor: 0.9 },
+  snare: { name: 'Snare Trap', in: { stick: 3, rope: 2 }, tools: ['knife'], hp: 30, r: 0.5, desc: 'A spring-pole snare. Catches small game while you work. Best in the forest.', place: 'land', buildTime: 3 },
   boatShelter: { name: 'Canoe Shelter', in: { log: 4, palmLeaf: 10, rope: 4 }, hp: 120, r: 3.0, desc: 'Protects a beached boat from storms.', place: 'beach', buildTime: 8 },
   raft: { name: 'Log Raft', in: { log: 6, rope: 6 }, hp: 80, r: 2, desc: 'Slow and unstable, but it floats. Comes with a paddle.', place: 'water', buildTime: 8, boat: 'raft' },
   canoe: { name: 'Dugout Canoe', in: { hardwood: 3, rope: 2 }, tools: ['stoneAxe'], hp: 120, r: 2, desc: 'Fast, nimble and holds cargo.', place: 'water', buildTime: 10, boat: 'canoe' },

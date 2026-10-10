@@ -449,10 +449,28 @@ export const BUILD = {
     return g;
   },
 
+  snare(seed = 11) {
+    const m = structureMats(), g = new THREE.Group();
+    const parts = [];
+    parts.push(pole(V(-0.25, 0, 0), V(-0.22, 0.45, 0), 0.02, seed), pole(V(0.25, 0, 0), V(0.22, 0.45, 0), 0.02, seed + 1));
+    parts.push(pole(V(-0.3, 0.42, 0), V(0.3, 0.42, 0), 0.015, seed + 2));
+    // bent spring pole
+    parts.push(tube((t) => V(0.6 - t * 0.6, Math.sin(t * Math.PI * 0.5) * 1.3, -0.3 + t * 0.3), (t) => 0.025 * (1 - t * 0.6), { segs: 6, radial: 5 }));
+    g.add(mesh(merge(parts), m.pole));
+    const noose = new THREE.TorusGeometry(0.14, 0.008, 4, 14); noose.rotateX(Math.PI / 2); noose.translate(0, 0.04, 0.05);
+    const line = tube((t) => V(0, 0.42 + t * 0.9, 0), () => 0.004, { segs: 2, radial: 3 });
+    g.add(mesh(merge([noose, line]), m.rope));
+    const catchG = new THREE.Group(); catchG.name = 'catch'; catchG.visible = false;
+    const body = new THREE.Mesh(new THREE.SphereGeometry(0.12, 8, 6), new THREE.MeshStandardMaterial({ color: 0x6a5a48, roughness: 0.9 }));
+    body.scale.set(0.8, 0.7, 1.4); body.position.set(0, 0.12, 0.05); catchG.add(body);
+    g.add(catchG);
+    return g;
+  },
+
   // construction frame shown while building
   scaffold(type) {
     const m = structureMats(), g = new THREE.Group();
-    const s = { campfire: 0.8, cookingRack: 0.9, dryingRack: 1.3, waterCollector: 0.7, storageBasket: 0.5, palmShelter: 1.8, woodenHut: 2.6, raisedPlatform: 2.0, dock: 1.2, boatShelter: 2.5 }[type] || 1;
+    const s = { snare: 0.4, campfire: 0.8, cookingRack: 0.9, dryingRack: 1.3, waterCollector: 0.7, storageBasket: 0.5, palmShelter: 1.8, woodenHut: 2.6, raisedPlatform: 2.0, dock: 1.2, boatShelter: 2.5 }[type] || 1;
     const parts = [];
     for (const x of [-s, s]) for (const z of [-s, s]) parts.push(pole(V(x, 0, z), V(x * 0.9, s * 1.1, z * 0.9), 0.03, x * 3 + z));
     parts.push(pole(V(-s, s * 1.05, -s), V(s, s * 1.05, -s), 0.025, 7), pole(V(-s, s * 1.05, s), V(s, s * 1.05, s), 0.025, 8));

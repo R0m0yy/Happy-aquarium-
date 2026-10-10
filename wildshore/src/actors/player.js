@@ -55,6 +55,7 @@ export class Player {
     }
     this.rig = new PoseRig(this.model, this.root);
     this.bones = this.rig.bones;
+    this.calibrateSockets();
 
     // kinematics
     this.pos = this.root.position;
@@ -212,36 +213,54 @@ export class Player {
     return y;
   }
 
-  updateAttachments() {
+  // Measure each socket bone in the rig's T-pose so attachments can be authored in
+  // character space (+Z forward, +Y up, -X right) regardless of the bone's own axes.
+  calibrateSockets() {
+    const tp = this.clips.tpose ? this.mixer.clipAction(this.clips.tpose) : null;
+    for (const a of Object.values(this.actions)) a.setEffectiveWeight(0);
+    if (tp) { tp.play(); tp.setEffectiveWeight(1); }
+    this.mixer.update(0);
+    this.root.updateMatrixWorld(true);
+    const rootQi = this.root.getWorldQuaternion(new THREE.Quaternion()).invert();
+    const rootP = this.root.getWorldPosition(new THREE.Vector3());
+    const toolRot = new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(
+      new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, 1), new THREE.Vector3(1, 0, 0)));
+    const mk = (bone, offRoot, rotRoot) => {
+      if (!bone) return null;
+      const qb = bone.getWorldQuaternion(new THREE.Quaternion()).premultiply(rootQi);
+      const qbi = qb.clone().invert();
+      return { bone, pos: offRoot.clone().applyQuaternion(qbi), rot: qbi.multiply(rotRoot) };
+    };
     const b = this.bones;
-    if (this.handModel) {
-      const id = this.equipped;
-      const rot = new THREE.Quaternion().setFromEuler(
-        /Spear|paddle/.test(id) ? new THREE.Euler(0, 0, -Math.PI / 2) : new THREE.Euler(Math.PI / 2, 0, -Math.PI / 2)
-      );
-      this.fixAttachScale(this.handModel, b.rHand, new THREE.Vector3(0.0, 0.08, 0.025), rot);
-    }
-    if (this.offModel) {
-      const rot = new THREE.Quaternion().setFromEuler(new THREE.Euler(Math.PI / 2, 0, Math.PI / 2));
-      this.fixAttachScale(this.offModel, b.lHand, new THREE.Vector3(0, 0.08, 0.025), rot);
-    }
-    if (b.spine2) {
-      this.fixAttachScale(this.backpack, b.spine2, new THREE.Vector3(0, 0.1, -0.2), new THREE.Quaternion());
-      this.backpack.visible = this.state !== 'sleep';
-    }
-    if (b.head) {
-      this.fixAttachScale(this.hat, b.head, new THREE.Vector3(0, 0.17, 0.0), new THREE.Quaternion().setFromEuler(new THREE.Euler(-0.12, 0, 0)));
-      this.hat.visible = this.state !== 'dive' && this.state !== 'swim';
-    }
+    void rootP;
+    this.sockets = {
+      // palm centre: ~8cm from the wrist toward the fingers (character right in T-pose)
+      rHand: mk(b.rHand, new THREE.Vector3(-0.085, -0.01, 0.0), toolRot),
+      lHand: mk(b.lHand, new THREE.Vector3(0.085, -0.01, 0.0), toolRot),
+      back: mk(b.spine2, new THREE.Vector3(0, 0.02, -0.19), new THREE.Quaternion()),
+      head: mk(b.head, new THREE.Vector3(0, 0.16, 0.01), new THREE.Quaternion().setFromEuler(new THREE.Euler(-0.1, 0, 0))),
+    };
+    if (tp) { tp.stop(); }
+    this.actions.idle.setEffectiveWeight(1);
+    this.mixer.update(0);
   }
 
-  // places obj at bone with offset given in metres in the bone's (unscaled) frame
-  fixAttachScale(obj, bone, off, rot) {
-    bone.updateWorldMatrix(true, false);
-    bone.matrixWorld.decompose(_p, _q, _s);
-    obj.position.copy(off).applyQuaternion(_q).add(_p);
-    obj.quaternion.copy(_q).multiply(rot);
-    obj.scale.setScalar(1);
+  socketAttach(obj, s) {
+    if (!obj || !s) return;
+    s.bone.updateWorldMatrix(true, false);
+    s.bone.matrixWorld.decompose(_p, _q, _s);
+    obj.position.copy(s.pos).applyQuaternion(_q).add(_p);
+    obj.quaternion.copy(_q).multiply(s.rot);
+  }
+
+  updateAttachments() {
+    const S = this.sockets;
+    this.socketAttach(this.handModel, S.rHand);
+    this.socketAttach(this.offModel, S.lHand);
+    this.socketAttach(this.backpack, S.back);
+    this.backpack.visible = this.state !== 'sleep';
+    this.socketAttach(this.hat, S.head);
+    this.hat.visible = this.state !== 'dive' && this.state !== 'swim';
   }
 
   updateGround(dt, ctl, world) {

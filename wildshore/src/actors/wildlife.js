@@ -648,17 +648,25 @@ export class Wildlife {
     });
   }
 
-  // melee / projectile hit test
-  hitTest(origin, dir, range, cone = 0.5, filter = null) {
+  // melee / projectile hit test. flat: judge range & angle on the ground plane (melee on slopes)
+  hitTest(origin, dir, range, cone = 0.5, filter = null, flat = true) {
     let best = null, bd = Infinity;
+    const dl = Math.hypot(dir.x, dir.z) || 1;
     for (const a of this.animals) {
       if (a.dead) continue;
       if (filter && !filter(a)) continue;
       _v.copy(a.pos); _v.y += a.kind === 'pig' ? 0.5 : 0.1;
       _v.sub(origin);
-      const d = _v.length();
+      let d, ang;
+      if (flat && a.kind !== 'shark' && a.kind !== 'turtle') {
+        if (Math.abs(_v.y) > 2.4) continue;
+        d = Math.hypot(_v.x, _v.z);
+        ang = Math.acos(clamp((_v.x * dir.x + _v.z * dir.z) / (Math.max(d, 1e-4) * dl), -1, 1));
+      } else {
+        d = _v.length();
+        ang = Math.acos(clamp(_v.dot(dir) / Math.max(d, 1e-4), -1, 1));
+      }
       if (d > range) continue;
-      const ang = Math.acos(clamp(_v.dot(dir) / Math.max(d, 1e-4), -1, 1));
       if (ang > cone + (d < 1.2 ? 0.6 : 0)) continue;
       if (d < bd) { bd = d; best = a; }
     }

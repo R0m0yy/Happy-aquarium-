@@ -170,6 +170,7 @@ export class Structures {
     if (s.type === 'cookingRack') { d.cook ??= []; }
     if (s.type === 'dryingRack') { d.items ??= []; }
     if (s.type === 'waterCollector') { d.water ??= 0; }
+    if (s.type === 'snare') { d.caught ??= false; }
     if (s.type === 'storageBasket' || s.type === 'woodenHut') {
       s.storage = new Inventory(s.type === 'woodenHut' ? 20 : 16, 999);
       if (d.items) s.storage.restore(d.items);
@@ -234,7 +235,7 @@ export class Structures {
   collide(pos, r) {
     for (const s of this.list) {
       const def = STRUCTURES[s.type];
-      if (s.type === 'dock' || s.type === 'raisedPlatform' || s.type === 'cookingRack') continue;
+      if (s.type === 'dock' || s.type === 'raisedPlatform' || s.type === 'cookingRack' || s.type === 'snare') continue;
       let cr = def.r * 0.75;
       if (s.type === 'palmShelter') cr = 0.6; // open front: you can step under it
       if (s.type === 'boatShelter') continue;
@@ -299,6 +300,16 @@ export class Structures {
       }
       if (s.storage) {
         s.storage.tick(dtH, 0.55);
+      }
+      if (s.type === 'snare') {
+        if (!d.caught) {
+          const isl = this.game.islandAt(s.x, s.z);
+          const rate = isl === 'hunter' ? 0.09 : isl === 'mangrove' ? 0.06 : 0.04;
+          const near = Math.hypot(s.x - g.player.pos.x, s.z - g.player.pos.z) < 12;
+          if (!near && Math.random() < rate * dtH) { d.caught = isl === 'mangrove' ? 'crab' : 'game'; }
+        }
+        const c = s.model?.getObjectByName('catch');
+        if (c) c.visible = !!d.caught;
       }
       // weather damage
       if (storm > 0 && !(s.type === 'boatShelter')) {

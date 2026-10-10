@@ -85,6 +85,7 @@ const DRAW = {
   hammer(c) { stick(c, 18, 54, 38, 22, 5); rock(c, 40, 18, 12, '#a8a49c', '#5a5852'); },
   torch(c) { stick(c, 22, 58, 36, 26, 6, '#7a5a3a'); c.fillStyle = rgrad(c, 38, 18, 14, '#fff0a0', 'rgba(255,90,20,0)'); c.beginPath(); c.arc(38, 18, 14, 0, Math.PI * 2); c.fill(); },
   trap(c) { stick(c, 14, 50, 50, 50, 3); stick(c, 18, 50, 32, 16, 3); stick(c, 46, 50, 32, 16, 3); c.strokeStyle = '#a88c58'; c.lineWidth = 1.5; c.beginPath(); c.arc(32, 44, 9, 0, Math.PI * 2); c.stroke(); },
+  snare(c) { DRAW.trap(c); },
   // structures / ui glyphs
   campfire(c) { for (let i = 0; i < 7; i++) rock(c, 14 + i * 6, 50, 5); stick(c, 18, 46, 42, 30, 4); stick(c, 46, 46, 24, 30, 4); c.fillStyle = rgrad(c, 32, 30, 16, '#fff0a0', 'rgba(255,80,20,0.2)'); c.beginPath(); c.moveTo(22, 44); c.quadraticCurveTo(24, 20, 32, 12); c.quadraticCurveTo(40, 22, 42, 44); c.fill(); },
   cookingRack(c) { stick(c, 12, 56, 14, 14, 3); stick(c, 52, 56, 50, 14, 3); stick(c, 8, 18, 56, 18, 3); for (let i = 0; i < 4; i++) stick(c, 18, 32 + i * 3, 46, 32 + i * 3, 1.5); fish(c, '#c98a4a', '#e0b070', 32, 28, 0.5); },
