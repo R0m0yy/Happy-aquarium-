@@ -1,3 +1,4 @@
+import { loadModel } from '../util/loadModel.js';
 // Reef fish: boids schools that wander their habitat, avoid the seabed, surface and
 // rocks, react to the diver (flee / scatter), hide among coral, and flee predators.
 // Rendered as instanced meshes with a vertex-shader tail undulation.
@@ -94,7 +95,7 @@ export class FishSystem {
     let barraGeo = null, barraMat = null;
     try {
       const gltf = await Promise.race([
-        new GLTFLoader().loadAsync('assets/models/fish.gltf.json'),
+        loadModel('assets/models/fish.gltf.json'),
         new Promise((_, rej) => setTimeout(() => rej(new Error('fish model timeout')), 30000)),
       ]);
       gltf.scene.traverse((o) => { if (o.isMesh && !barraGeo) { barraGeo = o.geometry.clone(); barraMat = o.material; } });

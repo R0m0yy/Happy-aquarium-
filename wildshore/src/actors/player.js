@@ -1,3 +1,4 @@
+import { loadModel } from '../util/loadModel.js';
 // The survivor: skinned GLB character with clip blending + procedural action layers,
 // grounded locomotion (acceleration, turning, slopes, collisions), swimming, diving,
 // boating, sleeping, and equipment held in the hands.
@@ -13,7 +14,7 @@ const _m = new THREE.Matrix4(), _p = new THREE.Vector3(), _s = new THREE.Vector3
 
 export async function loadSurvivor() {
   const gltf = await Promise.race([
-    new GLTFLoader().loadAsync('assets/models/survivor.gltf.json'),
+    loadModel('assets/models/survivor.gltf.json'),
     new Promise((_, rej) => setTimeout(() => rej(new Error('survivor model did not load')), 40000)),
   ]);
   return gltf;
