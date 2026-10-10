@@ -12,7 +12,7 @@ const _v = new THREE.Vector3(), _f = new THREE.Vector3(), _r = new THREE.Vector3
 const _m = new THREE.Matrix4(), _p = new THREE.Vector3(), _s = new THREE.Vector3();
 
 export async function loadSurvivor() {
-  const gltf = await new GLTFLoader().loadAsync('assets/models/survivor.glb');
+  const gltf = await new GLTFLoader().loadAsync('assets/models/survivor.gltf.json');
   return gltf;
 }
 

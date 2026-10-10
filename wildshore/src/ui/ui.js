@@ -174,7 +174,8 @@ export class UI {
       this.game.audio.start();
       this.game.audio.ui();
       if (a === 'new') {
-        if (hasSave && !confirm('Start a new game? Your current save will be overwritten when you next save.')) return;
+        const b = e.target.closest('button');
+        if (hasSave && !b.dataset.armed) { b.dataset.armed = '1'; b.textContent = 'Tap again: replace save'; return; }
         this.startGame(false);
       }
       if (a === 'continue') this.startGame(true);
@@ -223,7 +224,7 @@ export class UI {
     this.menu.className = 'menu settings';
     this.menu.innerHTML = `<div class="card"><h2>Settings</h2>
       <label>Graphics <select data-k="quality"><option value="low">Low</option><option value="medium">Medium</option><option value="ultra">Ultra</option></select></label>
-      <p class="sub small">Graphics changes apply after reload. Resolution adapts automatically to keep play smooth.</p>
+      <p class="sub small">Changing graphics saves your game and reloads. Resolution adapts automatically to keep play smooth.</p>
       <label>Day length <select data-k="dayLength"><option value="12">12 min</option><option value="24">24 min</option><option value="48">48 min</option></select></label>
       <label>Volume <input type="range" min="0" max="1" step="0.05" data-k="volume"></label>
       <label>Tips <select data-k="tips"><option value="1">On</option><option value="0">Off</option></select></label>
@@ -238,7 +239,7 @@ export class UI {
         g.env.dayLengthMin = s.dayLength;
         g.audio.setVolume(s.volume);
         try { localStorage.setItem('wildshore_settings', JSON.stringify(s)); } catch {}
-        if (prevQ !== s.quality && confirm('Reload now to apply the graphics preset? (progress is saved)')) { if (g.started) g.save(); location.reload(); return; }
+        if (prevQ !== s.quality) { if (g.started) g.save(); location.reload(); return; }
       }
       back();
     };

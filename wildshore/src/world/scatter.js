@@ -232,7 +232,7 @@ export function populateWorld(scene, quality) {
           continue;
         }
         // interior
-        const forest = isl.id === 'hunter' ? 0.16 : isl.rocky ? 0.01 : 0.045;
+        const forest = isl.id === 'hunter' ? 0.11 : isl.rocky ? 0.01 : 0.045;
         const palmIn = isl.id === 'hunter' ? 0.02 : isl.rocky ? 0.008 : 0.035;
         if (roll < forest * (0.6 + n1)) { place(sp.hardwood, ri.int(0, 3), x, z, { ...opt, scale: ri.range(0.8, 1.3) * (isl.id === 'hunter' ? 1.25 : 1), collide: 0.6, data: { res: 'hardwood', hp: 7 } }); continue; }
         if (roll < forest + palmIn) { place(sp.palm, ri.int(0, 5), x, z, { ...opt, scale: ri.range(0.9, 1.2), collide: 0.45, data: { res: 'palm', hp: 5 } }); continue; }

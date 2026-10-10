@@ -2,8 +2,8 @@
 
 | Asset | File | Source | Licence / terms |
 | --- | --- | --- | --- |
-| Survivor character, skeleton and Idle/Walk/Run/T-pose clips | `assets/models/survivor.glb` | three.js examples, `examples/models/gltf/Soldier.glb` (a Mixamo character), with textures downsized to 1024 px using gltf-transform | Distributed with three.js (MIT repository). The character comes from Adobe Mixamo, whose terms allow royalty-free use in games and other projects but not redistribution as a standalone asset. Recolored in-engine. |
-| Barramundi fish | `assets/models/fish.glb` | Khronos Group glTF Sample Assets, `Models/BarramundiFish` (Microsoft), with textures resized to 512 px | CC0 1.0 for the model files |
+| Survivor character, skeleton and Idle/Walk/Run/T-pose clips | `assets/models/survivor.gltf.json` | three.js examples, `examples/models/gltf/Soldier.glb` (a Mixamo character), with textures downsized to 1024 px using gltf-transform and repacked as self-contained glTF JSON | Distributed with three.js (MIT repository). The character comes from Adobe Mixamo, whose terms allow royalty-free use in games and other projects but not redistribution as a standalone asset. Recolored in-engine. |
+| Barramundi fish | `assets/models/fish.gltf.json` | Khronos Group glTF Sample Assets, `Models/BarramundiFish` (Microsoft), with textures resized to 512 px | CC0 1.0 for the model files |
 | Water normal map | `assets/textures/waternormals.jpg` | three.js examples, `examples/textures/waternormals.jpg` | three.js repository, MIT |
 | three.js r170 and addons | `vendor/three/` | npm `three@0.170.0` | MIT (see `vendor/three/LICENSE`) |
 

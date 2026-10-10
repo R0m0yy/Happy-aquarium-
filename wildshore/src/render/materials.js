@@ -96,7 +96,7 @@ export function patchMaterial(mat, opts = {}) {
           vec3 rel = vWPos - uCamPos;
           float along = dot(rel, dirF);
           float perp = length(rel - dirF * along);
-          float occl = step(1.5, L - along) * step(0.0, along) * (1.0 - smoothstep(1.4, 3.6, perp));
+          float occl = step(1.5, L - along) * step(0.0, along) * (1.0 - smoothstep(2.5, 6.0, perp));
           if (occl > 0.0) {
             float pat = hash12(floor(gl_FragCoord.xy));
             if (pat < occl * 0.82) discard;
