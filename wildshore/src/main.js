@@ -13,15 +13,22 @@ const game = new Game(canvas, settings.quality, settings);
 const ui = new UI(game, document.getElementById('ui'));
 window.__game = game;
 
+let failed = false;
 function fail(e) {
   console.error(e);
+  failed = true;
   const el = document.querySelector('.ltext');
-  if (el) el.textContent = 'Failed to start: ' + (e.message || e) + '. WebGL2 is required.';
+  if (el) { el.textContent = 'Could not start: ' + (e && e.message ? e.message : e) + '. Close and reopen the page to retry.'; el.style.color = '#ffb4a4'; el.style.maxWidth = '80vw'; el.style.textAlign = 'center'; }
 }
+window.addEventListener('error', (e) => { if (!game.started) fail(e.error || e.message); });
+window.addEventListener('unhandledrejection', (e) => { if (!game.started) fail(e.reason); });
 
 (async () => {
   try {
-    await game.init((p, t) => ui.setLoading(p, t));
+    await Promise.race([
+      game.init((p, t) => ui.setLoading(p, t)),
+      new Promise((_, rej) => setTimeout(() => rej(new Error('loading timed out')), 90000)),
+    ]);
   } catch (e) { fail(e); return; }
   ui.hideLoading();
   game.audio.setVolume(settings.volume);

@@ -93,7 +93,10 @@ export class FishSystem {
   async init() {
     let barraGeo = null, barraMat = null;
     try {
-      const gltf = await new GLTFLoader().loadAsync('assets/models/fish.gltf.json');
+      const gltf = await Promise.race([
+        new GLTFLoader().loadAsync('assets/models/fish.gltf.json'),
+        new Promise((_, rej) => setTimeout(() => rej(new Error('fish model timeout')), 30000)),
+      ]);
       gltf.scene.traverse((o) => { if (o.isMesh && !barraGeo) { barraGeo = o.geometry.clone(); barraMat = o.material; } });
       // normalise: centre & scale to 1m length along +z
       barraGeo.computeBoundingBox();

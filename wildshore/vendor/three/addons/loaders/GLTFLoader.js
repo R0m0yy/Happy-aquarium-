@@ -2588,7 +2588,7 @@ class GLTFParser {
 
 		}
 
-		if ( typeof createImageBitmap === 'undefined' || ( isSafari && safariVersion < 17 ) || ( isFirefox && firefoxVersion < 98 ) ) {
+		if ( true || typeof createImageBitmap === 'undefined' || ( isSafari && safariVersion < 17 ) || ( isFirefox && firefoxVersion < 98 ) ) {
 
 			this.textureLoader = new TextureLoader( this.options.manager );
 
